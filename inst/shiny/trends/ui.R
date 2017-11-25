@@ -26,7 +26,6 @@ shinyUI(fluidPage(
       conditionalPanel(
         condition = "output.fileUploaded == true && output.type == 'continuous'",
         tags$hr(),
-        verbatimTextOutput("fileInfo"),
         downloadButton("export2", "Export output"))
     ),
     

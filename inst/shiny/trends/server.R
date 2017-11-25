@@ -41,10 +41,7 @@ shinyServer(function(input, output) {
   output$type <- reactive({
     in_data()$type
   })
-
-  output$fileInfo <-
-    renderText(str(input$file))
-  
+ 
   outputOptions(output, 'fileUploaded', suspendWhenHidden = FALSE)
   outputOptions(output, 'type', suspendWhenHidden = FALSE)
   
