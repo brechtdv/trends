@@ -4,7 +4,7 @@ import(rmarkdown)
 import(ggplot2)
 import(shiny)
 import(codetools)
-importFrom(cenreg, NADA)
+importFrom(NADA, cenreg)
 
 ## exports
 export(trends)
