@@ -1,0 +1,10 @@
+## imports
+import(readxl)
+import(rmarkdown)
+import(ggplot2)
+import(shiny)
+import(codetools)
+importFrom(cenreg, NADA)
+
+## exports
+export(trends)

@@ -1,0 +1,88 @@
+---
+title: "Trend Analysis - Continuous Data"
+params:
+  inFile: NA
+  out: NA
+  level: NA
+output:
+  word_document:
+    reference_docx: report-template.docx
+---
+
+```{r fit, include=FALSE, cache=TRUE}
+out <- params$out
+n_col <- 4
+n_row <- ceiling(length(unique(out$out_tab$Matrix)) / n_col)
+h <- 2 * n_row
+```
+
+_Report generated on **`r Sys.Date()`**_
+
+_Input file: **`r params$inFile`**_
+
+_Matrix level analysed: **`r params$level`**_
+
+The trend analyses in this report are based on a regression for left-censored log-normal data using analysis result as dependent variable and year of analysis as independent variable, and implemented using the NADA package for `r R.version.string`. The graphs show the analysis results, with the left-censored observations highlighted in red. If applicable, the fitted trend line is also plotted.
+
+## Summary table
+
+```{r table, echo=FALSE}
+summary_tab <- out$out_tab
+colnames(summary_tab) <- paste0("**", colnames(summary_tab), "**")
+knitr::kable(summary_tab)
+```
+
+## Detailed trend analyses
+
+```{r, echo=FALSE, results='asis', message=FALSE, warnings=FALSE, fig.height=2, fig.width=3}
+all_par <- unique(out$out_tab$Parameter)
+old_par <- 0
+
+for (i in seq_along(out$out_list)) {
+  this_par <- which(all_par == out$out_tab$Parameter[i])
+  if (this_par != old_par) {
+    cat("  \n\n### ", this_par, ". ", out$out_tab$Parameter[i], "   \n\n", sep = "")
+    old_par <- old_par + 1
+  }
+  
+ df <-
+    with(out$out_list[[i]]$x,
+         data.frame(result = result,
+                    cen = cen,
+                    year = year))
+  p <-
+    ggplot(df, aes(x = year, y = result)) +
+      geom_point(aes(color = cen), size = 1) +
+      theme_bw() +
+      theme(axis.text = element_text(size = 6),
+            axis.title = element_text(size = 6),
+            plot.title = element_text(size = 8),
+            plot.subtitle = element_text(size = 7)) +
+      scale_x_continuous(NULL, limits = range(out$out_list[[i]]$years)) +
+      scale_y_continuous(NULL) +
+      scale_color_manual(values = c("grey50", "#F8766D"),
+                         guide = FALSE) +
+      ggtitle(out$out_tab$Matrix[i])
+  
+  Pval <- out$out_list[[i]]$P
+  if (!is.na(Pval)) {
+    COEF <- out$out_list[[i]]$COEF
+    years <- out$out_list[[i]]$years
+    yseq <- seq(min(years), max(years), 0.1)
+    df2 <- data.frame(x = yseq, y = exp(COEF[1] + yseq * COEF[2]))
+    p <-
+      p +
+      geom_line(data = df2, aes(x = x, y = y), color = "red") +
+      labs(subtitle =
+             paste0("coefficient: ", round(exp(COEF[2]), 3),
+                    ifelse(Pval < 0.001,
+                           " (P < 0.001)",
+                           sprintf(" (P = %s)", round(Pval, 3)))))
+    
+  } else {
+    p <- p + labs(subtitle = "no trend analysis possible")
+  }
+  
+  print(p)
+}
+```

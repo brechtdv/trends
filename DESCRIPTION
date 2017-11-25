@@ -1,0 +1,14 @@
+Package: trends
+Type: Package
+Title: Trend Analysis Shiny App
+Version: 0.0.1
+Date: 2017-11-25
+Authors@R: person("Brecht", "Devleesschauwer",
+                  role = c("aut", "cre"),
+                  email = "brechtdv@gmail.com")
+Author: Brecht Devleesschauwer [aut, cre]
+Maintainer: Brecht Devleesschauwer <brechtdv@gmail.com>
+Description: Shiny app to perform trend analyses for conformity and continuous data.
+Depends: R (>= 3.4.0), shiny
+Imports: readxl, ggplot2, codetools, rmarkdown, NADA
+License: GPL (>= 2)
