@@ -95,10 +95,14 @@ fit_discrete <-
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     
-    out_tab$Interpretation <- NA
-    out_tab$Interpretation[which(out_tab$'P-value' > 0.05)] <- "ns"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient < 0)] <- "Decreasing trend"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient > 0)] <- "Increasing trend"
+    out_tab$Interpretation <-
+      "No trend analysis possible"
+    out_tab$Interpretation[which(out_tab$'P-value' > 0.05)] <-
+      "Non-significant trend"
+    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient < 0)] <-
+      "Decreasing trend"
+    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient > 0)] <-
+      "Increasing trend"
     
     return(list(out_tab = out_tab, out_list = out_list, type = "discrete"))
   }
