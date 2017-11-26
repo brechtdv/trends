@@ -11,9 +11,6 @@ output:
 
 ```{r fit, include=FALSE, cache=TRUE}
 out <- params$out
-n_col <- 4
-n_row <- ceiling(length(unique(out$out_tab$Matrix)) / n_col)
-h <- 2 * n_row
 ```
 
 _Report generated on **`r Sys.Date()`**_
@@ -34,7 +31,7 @@ knitr::kable(summary_tab)
 
 ## Detailed trend analyses
 
-```{r, echo=FALSE, results='asis', message=FALSE, warnings=FALSE, fig.height=2, fig.width=3}
+```{r, echo=FALSE, results='asis', message=FALSE, warning=FALSE, fig.width=3, fig.height=2}
 all_par <- unique(out$out_tab$Parameter)
 old_par <- 0
 
