@@ -3,7 +3,7 @@ library(shiny)
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Trend Analysis"),
+  titlePanel("Trend Analysis (2008-2016)"),
   
   # Sidebar with file upload control
   sidebarLayout(
