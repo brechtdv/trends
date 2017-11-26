@@ -1,1 +1,8 @@
 ^\.travis\.yml$
+
+# RStudio files
+.Rproj.user/
+.Rproj$
+
+# R history files
+.Rhistory$
