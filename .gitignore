@@ -25,6 +25,7 @@ vignettes/*.pdf
 .httr-oauth
 
 # Shiny output
+*_cache/
 
 # =========================
 # Operating System Files
