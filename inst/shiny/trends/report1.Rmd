@@ -3,6 +3,7 @@ title: "Trend Analysis - Conformity Data"
 params:
   inFile: NA
   out: NA
+  level: NA
 output:
   word_document:
     reference_docx: report-template.docx
@@ -10,14 +11,13 @@ output:
 
 ```{r fit, include=FALSE, cache=TRUE}
 out <- params$out
-n_col <- 4
-n_row <- ceiling(length(unique(out$out_tab$Matrix)) / n_col)
-h <- 2 * n_row
 ```
 
 _Report generated on **`r Sys.Date()`**_
 
 _Input file: **`r params$inFile`**_
+
+_Matrix level analysed: **`r params$level`**_
 
 The trend analyses in this report are based on a logistic regression using non-conformity as dependent variable and year of analysis as independent variable, and implemented using `r R.version.string`.
 
@@ -31,27 +31,54 @@ knitr::kable(summary_tab)
 
 ## Detailed trend analyses
 
-```{r, echo=FALSE, results='asis', message=FALSE, warnings=FALSE, fig.width=10, fig.height=h}
-all_comp <- unique(out$out_tab$Component)
-for (i in seq(all_comp)) {
-  cat("### ", i, ". ", all_comp[i], "   \n\n", sep = "")
-  
-  id <- which(out$out_tab$Component == all_comp[i])
-  comp_list <- out$out_list[id]
-  
-  par(mfrow = c(n_row, n_col))
-  
-  for (j in seq(comp_list)) {
-    attach(comp_list[[j]])
-  
-    plot(years, apply(mx, 1, prop.table)[1,],
-         ylim = c(0,1), xlab = "", ylab = "", las = 1)
-    if (sum(mx) > 0) lines(years, expit(predict(fit)), col = "red")
-  
-    mtext(gsub(" - ", "\n", MAT), line = 1, cex = .8)
-    legend("topright", sprintf("p=%s", p), bty = "n")
+```{r, echo=FALSE, results='asis', message=FALSE, warning=FALSE, fig.width=3, fig.height=2}
+all_par <- unique(out$out_tab$Parameter)
+old_par <- 0
+
+for (i in seq_along(out$out_list)) {
+  this_par <- which(all_par == out$out_tab$Parameter[i])
+  if (this_par != old_par) {
+    cat("  \n\n### ", this_par, ". ", out$out_tab$Parameter[i], "   \n\n", sep = "")
+    old_par <- old_par + 1
   }
   
-  cat("   \n\n")
+  mxi <- out$out_list[[i]]$mx
+  yri <- out$out_list[[i]]$years
+  
+  df <-
+    data.frame(year = yri,
+               result = apply(mxi, 1, prop.table)[1,])
+  p <-
+    ggplot(df, aes(x = year, y = result)) +
+      geom_point() +
+      theme_bw() +
+      theme(axis.text = element_text(size = 6),
+            axis.title = element_text(size = 6),
+            plot.title = element_text(size = 8),
+            plot.subtitle = element_text(size = 7)) +
+      scale_x_continuous(NULL, limits = range(yri)) +
+      scale_y_continuous(NULL, limits = c(0, 1)) +
+      ggtitle(gsub(" - ", "\n", out$out_tab$Matrix[i]))
+  
+  Pval <- out$out_list[[i]]$p
+  if (!is.na(Pval)) {
+    fit <- out$out_list[[i]]$fit
+    yseq <- seq(min(yri), max(yri), 0.1)
+    df2 <- data.frame(x = yseq,
+                      y = expit(predict(fit, newdata = data.frame(years = yseq))))
+    p <-
+      p +
+        geom_line(data = df2, aes(x = x, y = y), color = "red") +
+        labs(subtitle =
+               paste0("coefficient: ", round(coef(fit)[2], 3),
+                      ifelse(Pval < 0.001,
+                             " (P < 0.001)",
+                             sprintf(" (P = %s)", round(Pval, 3)))))
+    
+  } else {
+    p <- p + labs(subtitle = "no trend analysis possible")
+  }
+  
+  print(p)
 }
 ```

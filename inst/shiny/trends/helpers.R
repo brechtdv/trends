@@ -11,6 +11,16 @@ readxl <-
     return(xl)
   }
 
+expit <-
+  function(x) {
+    exp(x)/(1 + exp(x))
+  }
+
+logit <-
+  function(x) {
+    log(x/(1 - x))
+  }
+
 ## main wrapper function
 fit_all <-
   function(file, level) {
@@ -22,7 +32,7 @@ fit_all <-
     
     ## transfer to appropriate function
     if ("Tout Programmation" %in% sheets) {
-      fit_discrete(file, years)
+      fit_discrete(file, years, level)
       
     } else {
       fit_continuous(file, years, level)
@@ -31,14 +41,15 @@ fit_all <-
 
 ## fit models to discrete data
 fit_discrete <-
-  function(file, years) {
+  function(file, years, level) {
     ## parameters
     par <- readxl(file, "Tout Programmation", range = cell_limits(c(NA, 11), c(4, NA)))
     par <- par[, complete.cases(t(par)), drop = FALSE]
     n_par <- ncol(par)
     
     ## data
-    x <- readxl(file, "Tout Programmation", range = cell_limits(c(5, 9), c(NA, NA)))
+    x <- readxl(file, "Tout Programmation", range = cell_limits(c(5, 3), c(NA, NA)))
+    x <- cbind(x[as.numeric(level)], x[, -c(1:7)])
     x <- head(x, -1)             # strip last row
     x <- x[, seq(1, ncol(x)-4)]  # strip last columns
     
@@ -53,7 +64,7 @@ fit_discrete <-
     year <- x[[2]]
     
     ## prepare output table
-    out_tab <- matrix(ncol = 4, nrow = n_par * n_mat)
+    out_tab <- matrix(ncol = 6, nrow = n_par * n_mat)
     
     ## prepare output list
     out_list <- vector("list", n_par * n_mat)
@@ -83,17 +94,31 @@ fit_discrete <-
         
         ## complete output table
         row <- j + n_mat * (i-1)
-        out_tab[row, ] <- c(par[3, i], levels(mat)[j], round(coef(fit)[2], 3), p)
+        out_tab[row, ] <-
+          c(par[3, i],
+            levels(mat)[j],
+            sum(mx),
+            length(unique(yr)),
+            round(coef(fit)[2], 3),
+            p)
         
         ## complete output list
-        out_list[[row]] <- list(years = years, mx = mx, fit = fit, p = p, PAR = par[3, i], MAT = levels(mat)[j])
+        out_list[[row]] <-
+          list(years = years,
+               mx = mx,
+               fit = fit,
+               p = p,
+               PAR = par[3, i],
+               MAT = levels(mat)[j])
       }
     }
     
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
-    colnames(out_tab) <- c("Parameter", "Matrix", "Coefficient", "P-value")
+    colnames(out_tab) <- c("Parameter", "Matrix", "Samples", "Years", "Coefficient", "P-value")
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
+    out_tab[[5]] <- as.numeric(out_tab[[5]])
+    out_tab[[6]] <- as.numeric(out_tab[[6]])
     
     out_tab$Interpretation <-
       "No trend analysis possible"

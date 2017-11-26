@@ -47,7 +47,11 @@ shinyServer(function(input, output) {
   
   output$export1 <-
     downloadHandler(
-      filename = "report.docx",
+      filename =
+        function() {
+          paste0(gsub("\\.xls.", "", input$file$name),
+                 "_LEVEL", input$level, "_TRENDS.docx")
+        },
       content = 
         function (file) {
           tempReport <- file.path(tempdir(), "report1.Rmd")
@@ -57,7 +61,9 @@ shinyServer(function(input, output) {
           rmarkdown::render(
             input = "report1.Rmd",
             output_file = file,
-            params = list(inFile = input$file[1], out = in_data()),
+            params = list(inFile = input$file[1],
+                          level = input$level,
+                          out = in_data()),
             envir = new.env(parent = globalenv()))
         }
     )
@@ -78,7 +84,9 @@ shinyServer(function(input, output) {
           rmarkdown::render(
             input = "report2.Rmd",
             output_file = file,
-            params = list(inFile = input$file[1], level = input$level, out = in_data()),
+            params = list(inFile = input$file[1],
+                          level = input$level,
+                          out = in_data()),
             envir = new.env(parent = globalenv()))
         }
     )
