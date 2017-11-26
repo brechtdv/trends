@@ -6,3 +6,6 @@
 
 # R history files
 .Rhistory$
+
+# Shiny output
+*_cache/
