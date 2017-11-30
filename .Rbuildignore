@@ -11,4 +11,5 @@
 
 # Shiny files
 _cache$
+rsconnect$
 ^.*\.dcf$
