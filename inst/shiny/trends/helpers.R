@@ -1,6 +1,7 @@
 ## required packages
 library(readxl)
 library(NADA)
+library(logistf)
 
 ## helper functions
 readxl <-
@@ -80,16 +81,26 @@ fit_discrete <-
         yr <- match(year[id], years)
         mx[yr, ] <- xy[id, ]
         
-        if (sum(mx) > 0) {
-          fit <- glm(mx ~ years, family = binomial)
+        if (length(unique(yr)) > 1) {
+          fit <- glm(mx ~ years, family = binomial)  # standard logistic regression
+          
+          # firth logistic regression
+          # n_years <- nrow(mx)
+          # regy <- rep(rep(c(1, 0), each = n_years), times = c(mx))
+          # regx <- rep(years, times = rowSums(mx))
+          # fit <- logistf(regy ~ regx)
+          
           if (!is.na(coef(fit)[2])) {
             p <- round(coef(summary(fit))[2, 4], 3)
+            # p <- round(fit$prob[2], 3)
+            COEF <- round(coef(fit)[2], 3)
+            
           } else {
-            p <- NA
+            p <- COEF <- NA
           }
           
         } else {
-          p <- NA
+          p <- COEF <- NA
         }
         
         ## complete output table
@@ -99,7 +110,7 @@ fit_discrete <-
             levels(mat)[j],
             sum(mx),
             length(unique(yr)),
-            round(coef(fit)[2], 3),
+            COEF,
             p)
         
         ## complete output list
@@ -139,7 +150,7 @@ fit_continuous <-
     Pval <- function(x) summary(x)@.Data[[9]]["year", "p"]
     
     ## read data
-    x <- readxl(file, 1)
+    x <- readxl(file)
     
     ## extract relevant columns
     cols <- c("Ann\xE9e", paste("Mat Niveau", level), "Param\xE8tre", "Ana.Ech: R\xE9sultat")
@@ -166,7 +177,7 @@ fit_continuous <-
     n_mat <- length(mat)
     
     ## prepare output table
-    out_tab <- matrix(ncol = 4, nrow = n_par * n_mat)
+    out_tab <- matrix(ncol = 6, nrow = n_par * n_mat)
     
     ## prepare output list
     out_list <- vector("list", n_par * n_mat)
@@ -190,23 +201,35 @@ fit_continuous <-
         
         ## complete output table
         row <- j + n_mat * (i-1)
-        out_tab[row, ] <- c(par[i], mat[j], exp(COEF[2]), P)
+        out_tab[row, ] <-
+          c(par[i],
+            mat[j],
+            nrow(xim),
+            n_years,
+            exp(COEF[2]),
+            P)
         
         ## complete output list
-        out_list[[row]] <- list(x = xim, COEF = COEF, P = P, years = years)
+        out_list[[row]] <-
+          list(x = xim,
+               COEF = COEF,
+               P = P,
+               years = years)
       }
     }
     
     ## remove non-existing combinations
     is_empty <- sapply(out_list, function(x) nrow(x$x) == 0)
-    out_tab <- out_tab[!is_empty, ]
+    out_tab <- out_tab[!is_empty, , drop=FALSE]
     out_list <- out_list[!is_empty]
     
     ## compile and return results
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
-    colnames(out_tab) <- c("Parameter", "Matrix", "Coefficient", "P-value")
-    out_tab[[3]] <- round(as.numeric(out_tab[[3]]), 3)
-    out_tab[[4]] <- round(as.numeric(out_tab[[4]]), 3)
+    colnames(out_tab) <- c("Parameter", "Matrix", "Samples", "Years", "Coefficient", "P-value")
+    out_tab[[3]] <- as.numeric(out_tab[[3]])
+    out_tab[[4]] <- as.numeric(out_tab[[4]])
+    out_tab[[5]] <- round(as.numeric(out_tab[[5]]), 3)
+    out_tab[[6]] <- round(as.numeric(out_tab[[6]]), 3)
     
     out_tab$Interpretation <-
       "No trend analysis possible"
