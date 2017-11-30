@@ -21,6 +21,8 @@ _Matrix level analysed: **`r params$level`**_
 
 The trend analyses in this report are based on a logistic regression using non-conformity as dependent variable and year of analysis as independent variable, and implemented using `r R.version.string`.
 
+IMPORTANT: The results have to be interpreted carefully accounting for expert knowledge on sampling design and diagnostic methods. The conclusions are based on assumptions linked to the selected models, such as linearity and heteroscedasticity.
+
 ## Summary table
 
 ```{r table, echo=FALSE}

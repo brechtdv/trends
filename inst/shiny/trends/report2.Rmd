@@ -21,6 +21,8 @@ _Matrix level analysed: **`r params$level`**_
 
 The trend analyses in this report are based on a regression for left-censored log-normal data using analysis result as dependent variable and year of analysis as independent variable, and implemented using the NADA package for `r R.version.string`. The graphs show the analysis results, with the left-censored observations highlighted in red. If applicable, the fitted trend line is also plotted.
 
+IMPORTANT: The results have to be interpreted carefully accounting for expert knowledge on sampling design and diagnostic methods. The conclusions are based on assumptions linked to the selected models, such as linearity and heteroscedasticity.
+
 ## Summary table
 
 ```{r table, echo=FALSE}
