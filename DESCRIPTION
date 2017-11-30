@@ -1,8 +1,8 @@
 Package: trends
 Type: Package
 Title: Trend Analysis Shiny App
-Version: 0.0.1
-Date: 2017-11-25
+Version: 0.0.2
+Date: 2017-11-30
 Authors@R: person("Brecht", "Devleesschauwer",
                   role = c("aut", "cre"),
                   email = "brechtdv@gmail.com")
