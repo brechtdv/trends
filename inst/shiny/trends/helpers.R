@@ -93,7 +93,7 @@ fit_discrete <-
           if (!is.na(coef(fit)[2])) {
             p <- round(coef(summary(fit))[2, 4], 3)
             # p <- round(fit$prob[2], 3)
-            COEF <- round(coef(fit)[2], 3)
+            COEF <- round(exp(coef(fit)[2]), 3)
             
           } else {
             p <- COEF <- NA
@@ -125,7 +125,8 @@ fit_discrete <-
     }
     
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
-    colnames(out_tab) <- c("Parameter", "Matrix", "Samples", "Years", "Coefficient", "P-value")
+    colnames(out_tab) <-
+      c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value")
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     out_tab[[5]] <- as.numeric(out_tab[[5]])
@@ -133,11 +134,14 @@ fit_discrete <-
     
     out_tab$Interpretation <-
       "No trend analysis possible"
-    out_tab$Interpretation[which(out_tab$'P-value' > 0.05)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' > 0.05)] <-
       "Non-significant trend"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient < 0)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' < 1)] <-
       "Decreasing trend"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient > 0)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' > 1)] <-
       "Increasing trend"
     
     return(list(out_tab = out_tab, out_list = out_list, type = "discrete"))
@@ -225,7 +229,8 @@ fit_continuous <-
     
     ## compile and return results
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
-    colnames(out_tab) <- c("Parameter", "Matrix", "Samples", "Years", "Coefficient", "P-value")
+    colnames(out_tab) <-
+      c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value")
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     out_tab[[5]] <- round(as.numeric(out_tab[[5]]), 3)
@@ -233,11 +238,14 @@ fit_continuous <-
     
     out_tab$Interpretation <-
       "No trend analysis possible"
-    out_tab$Interpretation[which(out_tab$'P-value' > 0.05)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' > 0.05)] <-
       "Non-significant trend"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient < 0)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' < 1)] <-
       "Decreasing trend"
-    out_tab$Interpretation[which(out_tab$'P-value' < 0.05 & out_tab$Coefficient > 0)] <-
+    out_tab$Interpretation[
+      which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' > 1)] <-
       "Increasing trend"
     
     return(list(out_tab = out_tab, out_list = out_list, type = "continuous"))

@@ -19,7 +19,7 @@ _Input file: **`r params$inFile`**_
 
 _Matrix level analysed: **`r params$level`**_
 
-The trend analyses in this report are based on a regression for left-censored log-normal data using analysis result as dependent variable and year of analysis as independent variable, and implemented using the NADA package for `r R.version.string`. The graphs show the analysis results, with the left-censored observations highlighted in red. If applicable, the fitted trend line is also plotted.
+The trend analyses in this report are based on a regression for left-censored log-normal data using analysis result as dependent variable and year of analysis as independent variable, and implemented using the NADA package for `r R.version.string`. The graphs show the analysis results, with the left-censored observations highlighted in red. If applicable, the fitted trend line is also plotted. The annual change is calculated as the exponent of the regression coefficient for "year", and corresponds to the fitted response ratio between two consecutive years.
 
 IMPORTANT: The results have to be interpreted carefully accounting for expert knowledge on sampling design and diagnostic methods. The conclusions are based on assumptions linked to the selected models, such as linearity and heteroscedasticity.
 
@@ -73,7 +73,7 @@ for (i in seq_along(out$out_list)) {
       p +
       geom_line(data = df2, aes(x = x, y = y), color = "red") +
       labs(subtitle =
-             paste0("coefficient: ", round(exp(COEF[2]), 3),
+             paste0("annual change: ", round(exp(COEF[2]), 3),
                     ifelse(Pval < 0.001,
                            " (P < 0.001)",
                            sprintf(" (P = %s)", round(Pval, 3)))))
