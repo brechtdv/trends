@@ -90,6 +90,8 @@ fit_discrete <-
         yr <- match(xy_mat$year, years)
         mx[yr, ] <- as.matrix(xy_mat[, -1])
         
+        fit <- NA
+        
         if (sum(mx, na.rm = TRUE) > 0 && length(unique(yr)) > 1) {
           fit <- glm(mx ~ years, family = binomial)  # standard logistic regression
           
