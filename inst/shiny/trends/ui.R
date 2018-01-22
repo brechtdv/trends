@@ -16,7 +16,8 @@ shinyUI(fluidPage(
                        "Matrix level 2" = 2,
                        "Matrix level 3" = 3,
                        "Matrix level 4" = 4,
-                       "Matrix level 5" = 5),
+                       "Matrix level 5" = 5,
+                       "Matrix description" = 6),
                      #multiple = TRUE,
                      selected = 4),
       conditionalPanel(

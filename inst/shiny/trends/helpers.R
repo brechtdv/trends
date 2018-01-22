@@ -163,7 +163,8 @@ fit_continuous <-
     x <- readxl(file)
     
     ## extract relevant columns
-    cols <- c("Ann\xE9e", paste("Mat Niveau", level), "Param\xE8tre", "Ana.Ech: R\xE9sultat")
+    col_name <- ifelse(level == 6, "Mat description", paste("Mat Niveau", level))
+    cols <- c("Ann\xE9e", col_name, "Param\xE8tre", "Ana.Ech: R\xE9sultat")
     cols <- iconv(cols, "latin1", "UTF-8")
     x <- x[, make.names(cols)]
     colnames(x) <- c("year", "matrix", "parameter", "result")
