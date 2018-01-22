@@ -19,7 +19,7 @@ _Input file: **`r params$inFile`**_
 
 _Matrix level analysed: **`r params$level`**_
 
-The trend analyses in this report are based on a logistic regression using non-conformity as dependent variable and year of analysis as independent variable, and implemented using `r R.version.string`. The annual change is calculated as the exponent of the regression coefficient for "year", and corresponds to the fitted response ratio between two consecutive years.
+The trend analyses in this report are based on a logistic regression using non-conformity as dependent variable and year of analysis as independent variable, and implemented using `r R.version.string`. The annual change is calculated as the exponent of the regression coefficient for "year", and corresponds to the fitted odds ratio between two consecutive years.
 
 IMPORTANT: The results have to be interpreted carefully accounting for expert knowledge on sampling design and diagnostic methods. The conclusions are based on assumptions linked to the selected models, such as linearity and heteroscedasticity.
 
