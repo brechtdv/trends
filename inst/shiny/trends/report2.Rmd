@@ -44,21 +44,35 @@ for (i in seq_along(out$out_list)) {
     old_par <- old_par + 1
   }
   
- df <-
+  df <-
     with(out$out_list[[i]]$x,
          data.frame(result = result,
                     cen = cen,
                     year = year))
+  
+  yri <- out$out_list[[i]]$years
+  ni <- with(df, tapply(result, year, length))
+  ni2 <- ni[as.character(yri)]
+  ni2[is.na(ni2)] <- 0
+  xlabs <- paste(yri, "\n", ni2)
+
   p <-
     ggplot(df, aes(x = year, y = result)) +
-      geom_point(aes(color = cen), size = 1) +
+      geom_jitter(aes(color = cen),
+                  size = 1,
+                  width = 0.2,
+                  height = 0) +
       theme_bw() +
       theme(axis.text = element_text(size = 6),
             axis.title = element_text(size = 6),
             plot.title = element_text(size = 8),
             plot.subtitle = element_text(size = 7)) +
-      scale_x_continuous(NULL, limits = range(out$out_list[[i]]$years)) +
-      scale_y_continuous(NULL) +
+      scale_x_continuous(NULL,
+                         limits = range(out$out_list[[i]]$years),
+                         breaks = out$out_list[[i]]$years,
+                         labels = xlabs) +
+      scale_y_continuous(NULL,
+                         limits = c(0, NA)) +
       scale_color_manual(values = c("grey50", "#F8766D"),
                          guide = FALSE) +
       ggtitle(out$out_tab$Matrix[i])

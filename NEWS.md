@@ -12,6 +12,10 @@
 
 * Page numbers added to report.
 
+* More informative x axis labels introduced.
+
+* Jitter added to continuous observations.
+
 ## Bug fixes and minor improvements
 
 * Conformity data for multiple years are now correctly aggregated.

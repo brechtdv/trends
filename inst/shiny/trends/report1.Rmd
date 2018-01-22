@@ -46,6 +46,8 @@ for (i in seq_along(out$out_list)) {
   
   mxi <- out$out_list[[i]]$mx
   yri <- out$out_list[[i]]$years
+  xlabs <- paste(yri, "\n", mxi[, 1], "/", mxi[, 2])
+  xlabs[grepl("NA", xlabs)] <- gsub(" \n.*", "", xlabs[grepl("NA", xlabs)])
   
   df <-
     data.frame(year = yri,
@@ -58,7 +60,10 @@ for (i in seq_along(out$out_list)) {
             axis.title = element_text(size = 6),
             plot.title = element_text(size = 8),
             plot.subtitle = element_text(size = 7)) +
-      scale_x_continuous(NULL, limits = range(yri)) +
+      scale_x_continuous(NULL,
+                         limits = range(yri),
+                         breaks = yri,
+                         labels = xlabs) +
       scale_y_continuous(NULL, limits = c(0, 1)) +
       ggtitle(gsub(" - ", "\n", out$out_tab$Matrix[i]))
   
