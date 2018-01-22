@@ -7,4 +7,4 @@ import(codetools)
 importFrom(NADA, cenreg)
 
 ## exports
-export(trends)
+export(runApp)
