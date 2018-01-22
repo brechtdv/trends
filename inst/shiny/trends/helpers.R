@@ -76,12 +76,18 @@ fit_discrete <-
       xy[is.na(xy)] <- 0
       
       for (j in seq(n_mat)) {
-        mx <- matrix(NA, ncol = 2, nrow = length(years))
         id <- which(mat == levels(mat)[j])
-        yr <- match(year[id], years)
-        mx[yr, ] <- xy[id, ]
+        xy_mat <- data.frame(year[id],
+                             as.numeric(xy[id, 1]),
+                             as.numeric(xy[id, 2]))
+        names(xy_mat) <- c("year", "NC", "C")
+        xy_mat <- aggregate(cbind(NC, C) ~ year, sum, data = xy_mat)
         
-        if (sum(mx) > 0 && length(unique(yr)) > 1) {
+        mx <- matrix(NA, ncol = 2, nrow = length(years))
+        yr <- match(xy_mat$year, years)
+        mx[yr, ] <- as.matrix(xy_mat[, -1])
+        
+        if (sum(mx, na.rm = TRUE) > 0 && length(unique(yr)) > 1) {
           fit <- glm(mx ~ years, family = binomial)  # standard logistic regression
           
           # firth logistic regression
@@ -108,8 +114,8 @@ fit_discrete <-
         out_tab[row, ] <-
           c(par[3, i],
             levels(mat)[j],
-            sum(mx),
-            length(unique(yr)),
+            sum(mx, na.rm = TRUE),
+            length(yr),
             COEF,
             p)
         
