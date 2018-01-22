@@ -1,7 +1,7 @@
 ## required packages
 library(readxl)
 library(NADA)
-library(logistf)
+#library(logistf)
 
 ## helper functions
 readxl <-
@@ -76,12 +76,12 @@ fit_discrete <-
       xy[is.na(xy)] <- 0
       
       for (j in seq(n_mat)) {
-        mx <- matrix(0, ncol = 2, nrow = length(years))
+        mx <- matrix(NA, ncol = 2, nrow = length(years))
         id <- which(mat == levels(mat)[j])
         yr <- match(year[id], years)
         mx[yr, ] <- xy[id, ]
         
-        if (length(unique(yr)) > 1) {
+        if (sum(mx) > 0 && length(unique(yr)) > 1) {
           fit <- glm(mx ~ years, family = binomial)  # standard logistic regression
           
           # firth logistic regression
