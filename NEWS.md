@@ -6,9 +6,11 @@
 
 ## New features
 
-* Added `NEWS.md` file.
+* `NEWS.md` file added.
 
-* Added option to analyze 'Matrix description' level.
+* Option added to analyze 'Matrix description' level.
+
+* Page numbers added to report.
 
 ## Bug fixes and minor improvements
 
