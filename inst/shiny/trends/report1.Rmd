@@ -46,7 +46,7 @@ for (i in seq_along(out$out_list)) {
   
   mxi <- out$out_list[[i]]$mx
   yri <- out$out_list[[i]]$years
-  xlabs <- paste(yri, "\n", mxi[, 1], "/", mxi[, 2])
+  xlabs <- paste(yri, "\n", mxi[, 1], "/", rowSums(mxi))
   xlabs[grepl("NA", xlabs)] <- gsub(" \n.*", "", xlabs[grepl("NA", xlabs)])
   
   df <-

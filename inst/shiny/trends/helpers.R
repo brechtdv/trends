@@ -3,6 +3,9 @@ library(readxl)
 library(NADA)
 #library(logistf)
 
+## settings
+options(scipen = 999)
+
 ## helper functions
 readxl <-
   function (...) {
@@ -133,6 +136,7 @@ fit_discrete <-
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
     colnames(out_tab) <-
       c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value")
+
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     out_tab[[5]] <- as.numeric(out_tab[[5]])
@@ -149,7 +153,7 @@ fit_discrete <-
     out_tab$Interpretation[
       which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' > 1)] <-
       "Increasing trend"
-    
+
     return(list(out_tab = out_tab, out_list = out_list, type = "discrete"))
   }
 
@@ -238,6 +242,7 @@ fit_continuous <-
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
     colnames(out_tab) <-
       c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value")
+    
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     out_tab[[5]] <- round(as.numeric(out_tab[[5]]), 3)
@@ -254,6 +259,6 @@ fit_continuous <-
     out_tab$Interpretation[
       which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' > 1)] <-
       "Increasing trend"
-    
+
     return(list(out_tab = out_tab, out_list = out_list, type = "continuous"))
   }
