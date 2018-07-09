@@ -27,12 +27,12 @@ logit <-
 
 ## main wrapper function
 fit_all <-
-  function(file, level) {
+  function(file, level, yearrange) {
     ## extract sheet names
     sheets <- excel_sheets(file)
     
     ## define years of analysis
-    years <- 2008:2016
+    years <- yearrange
     
     ## transfer to appropriate function
     if ("Tout Programmation" %in% sheets) {
@@ -56,6 +56,9 @@ fit_discrete <-
     x <- cbind(x[as.numeric(level)], x[, -c(1:7)])
     x <- head(x, -1)             # strip last row
     x <- x[, seq(1, ncol(x)-4)]  # strip last columns
+    
+        ## restrict observations to year range
+    x <- x[x[[2]] %in% years, ]    
     
     ## to numeric
     x[, -1] <- sapply(x[, -1], as.numeric)
@@ -178,6 +181,9 @@ fit_continuous <-
     ## remove observations without year
     x <- x[complete.cases(x$year), ]
     
+    ## restrict observations to year range
+    x <- x[x$year %in% years, ]
+      
     ## define censored observations
     x$cen <- grepl("<", x$result)
     ## .. extract LOQ/LOD from entry

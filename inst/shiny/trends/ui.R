@@ -3,7 +3,7 @@ library(shiny)
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Trend Analysis (2008-2016)"),
+  titlePanel("Trend Analysis"),
   
   # Sidebar with file upload control
   sidebarLayout(
@@ -20,6 +20,12 @@ shinyUI(fluidPage(
                        "Matrix description" = 6),
                      #multiple = TRUE,
                      selected = 4),
+      sliderInput("yearrange",
+                  "Range of years to be analysed",
+                  min = 2008,
+                  max = as.numeric(format(Sys.Date(), "%Y")),
+                  value = c(2008, 2016),
+                  sep = ""),
       conditionalPanel(
         condition = "output.fileUploaded == true && output.type == 'discrete'",
         tags$hr(),

@@ -27,7 +27,8 @@ shinyServer(function(input, output) {
     if (is.null(inFile))
       return(NULL)
     
-    out <- fit_all(inFile$datapath, input$level)
+    yrs <- seq(input$yearrange[1], input$yearrange[2])
+    out <- fit_all(inFile$datapath, input$level, yrs)
   })
   
   output$fileUploaded <- reactive({
@@ -63,6 +64,7 @@ shinyServer(function(input, output) {
             output_file = file,
             params = list(inFile = input$file[1],
                           level = input$level,
+                          yearrange = input$yearrange,
                           out = in_data()),
             envir = new.env(parent = globalenv()))
         }
@@ -86,6 +88,7 @@ shinyServer(function(input, output) {
             output_file = file,
             params = list(inFile = input$file[1],
                           level = input$level,
+                          yearrange = input$yearrange,
                           out = in_data()),
             envir = new.env(parent = globalenv()))
         }

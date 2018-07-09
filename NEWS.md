@@ -1,3 +1,9 @@
+# trends 0.0.5
+
+## New features
+
+* Slider added to select year range.
+
 # trends 0.0.4
 
 ## Breaking changes

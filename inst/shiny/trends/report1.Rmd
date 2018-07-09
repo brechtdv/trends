@@ -4,6 +4,7 @@ params:
   inFile: NA
   out: NA
   level: NA
+  yearrange: NA
 output:
   word_document:
     reference_docx: report-template.docx
@@ -18,6 +19,8 @@ _Report generated on **`r Sys.Date()`**_
 _Input file: **`r params$inFile`**_
 
 _Matrix level analysed: **`r ifelse(params$level == 6, "Description", params$level)`**_
+
+_Years analysed: **`r paste(params$yearrange, collapse = ":")`**_
 
 The trend analyses in this report are based on a logistic regression using non-conformity as dependent variable and year of analysis as independent variable, and implemented using `r R.version.string`. The annual change is calculated as the exponent of the regression coefficient for "year", and corresponds to the fitted odds ratio between two consecutive years.
 
