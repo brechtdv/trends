@@ -11,3 +11,7 @@ The easiest way to install the `trends` package is via the `devtools` package:
 The Shiny app is launched as follows:
 
     trends::runApp()
+
+### Online version
+
+https://cbra.shinyapps.io/trends/
