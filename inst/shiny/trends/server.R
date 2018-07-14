@@ -7,28 +7,122 @@ source("helpers.R")
 
 shinyServer(function(input, output) {
   
-  output$info1 <- renderUI(
-    if (is.null(input$file) & is.null(in_data())) {
-      h1("Please select a database")
-    })
-  output$info2 <- renderUI(
-    if (!is.null(input$file) & is.null(in_data())) {
-      h1("Processing")
-    })
-  
   in_data <- reactive({
-    # input$file will be NULL initially. After the user selects
-    # and uploads a file, it will be a data frame with 'name',
-    # 'size', 'type', and 'datapath' columns. The 'datapath'
-    # column will contain the local filenames where the data can
-    # be found.
+    ## no file selected
+    validate(
+      need(input$file != "", "Please select a database")
+    )
+    
     inFile <- input$file
     
     if (is.null(inFile))
       return(NULL)
     
+    ## extract sheet names
+    sheets <- excel_sheets(inFile$datapath)
+    
+    ## define years of analysis
     yrs <- seq(input$yearrange[1], input$yearrange[2])
-    out <- fit_all(inFile$datapath, input$level, yrs)
+    
+    ## transfer to appropriate function
+    if ("Tout Programmation" %in% sheets) {
+      output$info1 <-
+        renderUI({
+          tagList(
+            div("Identified dataset: Conformity data",
+                class="shiny-output-error-validation"),
+            hr()
+          )
+        })
+      fit_discrete(inFile$datapath, yrs, input$level)
+        
+    } else {
+      ## read data
+      x <- readxl(inFile$datapath)
+      
+      ## extract relevant columns
+      col_name_fr <- ifelse(input$level == 6, "Mat description", paste("Mat Niveau", input$level))
+      cols_fr <- c("Ann\xE9e", col_name_fr, "Param\xE8tre", "Ana.Ech: R\xE9sultat")
+      cols_fr <- iconv(cols_fr, "latin1", "UTF-8")
+      
+      col_name_nl <- ifelse(input$level == 6, "Mat omschrijving", paste("Mat Niveau", input$level))
+      cols_nl <- c("Jaar", col_name_nl, "Parameter", "Mon.ana Resultaat")
+      
+      ## check col names
+      validate(
+        need(all(make.names(cols_fr) %in% colnames(x)) || all(make.names(cols_nl) %in% colnames(x)),
+             paste("Error: the following columns are required:\n",
+                   "FR:", paste(sQuote(cols_fr), collapse = ", "), "\n",
+                   "NL:", paste(sQuote(cols_nl), collapse = ", "))))
+      
+      ## detect language
+      if ("Jaar" %in% colnames(x)) {
+        lang <- "NL"
+        
+        ## clean data
+        x <- x[, make.names(cols_nl)]
+        colnames(x) <- c("year", "matrix", "parameter", "result")
+        
+      } else {
+        lang <- "FR"
+        
+        ## clean data
+        x <- x[, make.names(cols_fr)]
+        colnames(x) <- c("year", "matrix", "parameter", "result")
+      }
+      
+      ## create info output
+      output$info1 <-
+        renderUI({
+          tagList(
+            div("Identified dataset: Continuous data",
+                class="shiny-output-error-validation"),
+            div(paste("Identified language:", lang),
+                class="shiny-output-error-validation"),
+            hr()
+          )
+        })
+      
+      ## check for non-numeric or zero values
+      is_na <- !grepl("[0-9]", x$result)
+      is_zero <-
+        suppressWarnings(
+          as.numeric(
+            gsub(",", ".",
+                 sub("\\D+$", "",
+                     sub("^\\D+", "", x$result)))) == 0)
+      is_zero[is.na(is_zero)] <- FALSE
+
+      warning1 <- warning2 <- NULL
+      
+      if (any(is_na))
+        warning1 <-
+        div(paste("Removed", sum(is_na), "observations:",
+                  paste(sQuote(x$result[is_na]), collapse = ", ")),
+            class = "alert alert-warning")
+      
+      if (any(is_zero))
+        warning2 <-
+        div(paste("Removed", sum(is_zero), "zero observations."),
+            class = "alert alert-warning")
+      
+      if (!is.null(warning1) | !is.null(warning2)) {
+        output$info2 <-
+          renderUI({
+            tagList(
+              warning1,
+              warning2,
+              hr()
+            )
+          })
+        
+      } else {
+        output$info2 <- NULL
+      }
+
+      ## fit model
+      fit_continuous(x, yrs, input$level)
+    }
   })
   
   output$fileUploaded <- reactive({

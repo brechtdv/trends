@@ -164,32 +164,30 @@ fit_discrete <-
 
 ## fit models to continuous data
 fit_continuous <-
-  function(file, years, level) {
+  function(x, years, level) {
     ## helper functions
     Pval <- function(x) summary(x)@.Data[[9]]["year", "p"]
-    
-    ## read data
-    x <- readxl(file)
-    
-    ## extract relevant columns
-    col_name <- ifelse(level == 6, "Mat description", paste("Mat Niveau", level))
-    cols <- c("Ann\xE9e", col_name, "Param\xE8tre", "Ana.Ech: R\xE9sultat")
-    cols <- iconv(cols, "latin1", "UTF-8")
-    x <- x[, make.names(cols)]
-    colnames(x) <- c("year", "matrix", "parameter", "result")
     
     ## remove observations without year
     x <- x[complete.cases(x$year), ]
     
     ## restrict observations to year range
     x <- x[x$year %in% years, ]
-      
+
     ## define censored observations
-    x$cen <- grepl("<", x$result)
+    x$cen <- grepl("<", x$result) | grepl("[[:alpha:]]", x$result)
+    
     ## .. extract LOQ/LOD from entry
-    x$result <- gsub("\\(.*", "", gsub("<", "", x$result))
+    x$result <- gsub(",", ".", sub("\\D+$", "", sub("^\\D+", "", x$result)))
+
     ## .. convert values to numeric
-    x$result <- as.numeric(gsub(",", ".", x$result))
+    x$result <- as.numeric(x$result)
+    
+    ## remove non-numeric observations
+    x <- x[!is.na(x$result), ]
+    
+    ## remove zero observations
+    x <- x[x$result != 0, ]
     
     ## define unique parameters
     par <- unique(x$parameter)
@@ -213,7 +211,7 @@ fit_continuous <-
         xim <- subset(xi, matrix == mat[j])
         n_years <- length(unique(xim$year))
         
-        if (n_years == 1 | length(unique(xim$result)) == 1) {
+        if (n_years == 1 | length(unique(xim$result)) == 1 | all(xim$cen)) {
           P <- COEF <- NA
           
         } else {

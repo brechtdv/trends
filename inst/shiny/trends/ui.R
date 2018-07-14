@@ -38,10 +38,7 @@ shinyUI(fluidPage(
     
     mainPanel(
       uiOutput("info1"),
-      #uiOutput("info2"),
-      conditionalPanel(
-        condition = "output.fileUploaded == false",
-        uiOutput("info2")),
+      uiOutput("info2"),
       dataTableOutput("tab")
     )
   )

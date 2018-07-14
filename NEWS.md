@@ -1,8 +1,26 @@
+# trends 0.0.6
+
+## New features
+
+* Expanded definition of below detection limit values.
+
+* Introduced information and warning messages.
+
+* Introduced language detection for continuous data.
+
+* Detect and remove non-numeric or zero values.
+
+## Bug fixes and minor improvements
+
+* Improved definition of x axis for continuous data.
+
+
 # trends 0.0.5
 
 ## New features
 
 * Slider added to select year range.
+
 
 # trends 0.0.4
 

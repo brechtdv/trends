@@ -71,13 +71,15 @@ for (i in seq_along(out$out_list)) {
             plot.title = element_text(size = 8),
             plot.subtitle = element_text(size = 7)) +
       scale_x_continuous(NULL,
-                         limits = range(out$out_list[[i]]$years),
+                         #limits = range(out$out_list[[i]]$years),
                          breaks = out$out_list[[i]]$years,
-                         labels = xlabs) +
+                         labels = xlabs,
+                         expand = c(0, 0.4)) +
       scale_y_continuous(NULL,
                          limits = c(0, NA)) +
       scale_color_manual(values = c("grey50", "#F8766D"),
                          guide = FALSE) +
+      coord_cartesian(xlim = range(out$out_list[[i]]$years)) +
       ggtitle(out$out_tab$Matrix[i])
   
   Pval <- out$out_list[[i]]$P
