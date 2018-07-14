@@ -12,6 +12,8 @@
 
 ## Bug fixes and minor improvements
 
+* Force correct colors of censored values.
+
 * Improved definition of x axis for continuous data.
 
 
