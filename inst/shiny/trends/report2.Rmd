@@ -78,6 +78,7 @@ for (i in seq_along(out$out_list)) {
       scale_y_continuous(NULL,
                          limits = c(0, NA)) +
       scale_color_manual(values = c("grey50", "#F8766D"),
+                         limits = c(FALSE, TRUE),
                          guide = FALSE) +
       coord_cartesian(xlim = range(out$out_list[[i]]$years)) +
       ggtitle(out$out_tab$Matrix[i])
