@@ -15,3 +15,7 @@ The Shiny app is launched as follows:
 ### Online version
 
 https://cbra.shinyapps.io/trends/
+
+### Acknowledgments
+
+This tool was created by [Brecht Devleesschauwer](mailto:brechtdv@gmail.com) (Sciensano, UGent) and [Niko Speybroeck](mailto:niko.speybroeck@uclouvain.be) (UCLouvain).
