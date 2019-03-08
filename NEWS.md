@@ -1,3 +1,12 @@
+# trends 0.0.7
+
+## Bug fixes and minor improvements
+
+* Define ymax for continuous data plots.
+
+* Remove dots in conformity data (used for thousands).
+
+
 # trends 0.0.6
 
 ## New features
