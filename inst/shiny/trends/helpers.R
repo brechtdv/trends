@@ -57,8 +57,11 @@ fit_discrete <-
     x <- head(x, -1)             # strip last row
     x <- x[, seq(1, ncol(x)-4)]  # strip last columns
     
-        ## restrict observations to year range
+    ## restrict observations to year range
     x <- x[x[[2]] %in% years, ]    
+    
+    ## remove dots (used for thousands)
+    x[, -1] <- sapply(x[, -1], function(y) gsub("\\.", "", y))
     
     ## to numeric
     x[, -1] <- sapply(x[, -1], as.numeric)
