@@ -154,7 +154,7 @@ fit_discrete <-
       "No trend analysis possible"
     out_tab$Interpretation[
       which(out_tab$'P-value' > 0.05)] <-
-      "Non-significant trend"
+      "Non-significant"
     out_tab$Interpretation[
       which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' < 1)] <-
       "Decreasing trend"
@@ -201,7 +201,7 @@ fit_continuous <-
     n_mat <- length(mat)
     
     ## prepare output table
-    out_tab <- matrix(ncol = 6, nrow = n_par * n_mat)
+    out_tab <- matrix(ncol = 7, nrow = n_par * n_mat)
     
     ## prepare output list
     out_list <- vector("list", n_par * n_mat)
@@ -231,7 +231,8 @@ fit_continuous <-
             nrow(xim),
             n_years,
             exp(COEF[2]),
-            P)
+            P,
+            sum(xim$cen))
         
         ## complete output list
         out_list[[row]] <-
@@ -250,18 +251,19 @@ fit_continuous <-
     ## compile and return results
     out_tab <- data.frame(out_tab, stringsAsFactors = FALSE)
     colnames(out_tab) <-
-      c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value")
+      c("Parameter", "Matrix", "Samples", "Years", "Annual change", "P-value", "CEN")
     
     out_tab[[3]] <- as.numeric(out_tab[[3]])
     out_tab[[4]] <- as.numeric(out_tab[[4]])
     out_tab[[5]] <- round(as.numeric(out_tab[[5]]), 3)
     out_tab[[6]] <- round(as.numeric(out_tab[[6]]), 3)
+    out_tab[[7]] <- as.numeric(out_tab[[7]])
     
     out_tab$Interpretation <-
       "No trend analysis possible"
     out_tab$Interpretation[
       which(out_tab$'P-value' > 0.05)] <-
-      "Non-significant trend"
+      "Non-significant"
     out_tab$Interpretation[
       which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' < 1)] <-
       "Decreasing trend"
@@ -269,5 +271,8 @@ fit_continuous <-
       which(out_tab$'P-value' < 0.05 & out_tab$'Annual change' > 1)] <-
       "Increasing trend"
 
+    out_tab[["Non-detects"]] <- sprintf("%s (%s%%)", out_tab$CEN, round(100*out_tab$CEN/out_tab$Samples))
+    out_tab$CEN <- NULL
+    
     return(list(out_tab = out_tab, out_list = out_list, type = "continuous"))
   }
