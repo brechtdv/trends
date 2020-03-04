@@ -1,3 +1,12 @@
+# trends 0.0.8
+
+## Minor improvements
+
+* Add `n (%)` non-detects for continuous data to output tables.
+
+* Change `Non-significant trend` to `Non-significant`.
+
+
 # trends 0.0.7
 
 ## Bug fixes and minor improvements
